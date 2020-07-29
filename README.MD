@@ -155,3 +155,82 @@
                }
           return render(request, 'account/login.html', context)
      ~~~
+
+4) Update `url patterns`     
+
+     - create a new `urls.py` in the app's `account` folder and add the following:
+
+          ~~~ py
+          from django.urls import path 
+          from . import views
+
+          urlpatterns = [
+               path('login/', views.user_login, name = 'login')
+          ]
+          ~~~
+
+     - update the project's `bookmarks/bookmarks/urls.py` file    
+
+          ~~~ py
+          from django.contrib import admin
+          from django.urls import path
+
+          urlpatterns = [
+          path('admin/', admin.site.urls),
+          path('account/', include('account.urls'))
+          ]
+          ~~~
+
+5) Create a login and base template     
+
+     - <img src = "template_structure.png"/>
+
+     - add the following to `base.html`
+
+          ~~~ html
+          {% load static %}
+
+          <!DOCTYPE html>
+
+          <html>
+
+               <head>
+                    <title>{% block title %} {% endblock %} </title>
+                    <link href = "{% static "css.base.css" %}" rel = "stylesheet" />
+               </head>
+
+               <body>
+                    <div id = "header">
+                         <span class = "logo"> Bookmarks </span>
+                    </div>
+                    <div id = "content">
+                         {% block content %} 
+                         {% endblock %}
+                    </div>
+
+               </body>
+          </html>
+          ~~~
+
+     - add the following to `login.html`
+
+          ~~~ html
+          (% extends "base.html" %)
+
+          {% block title %} Log in {% endblock %}
+
+          {% block content %}
+
+               <h1> Log in </h1>
+
+               <p> Use the following form </p>
+
+               <form> method = "post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <p>
+                         <input type = "submit" value = "Log in">
+                    </p>
+               </form>
+          {% endblock %}
+          ~~~

@@ -535,3 +535,36 @@
      - the following should be displayed
 
           <img src = "login_form.png" width = "20%"/>
+
+
+#### Using Default Authentication Views
+
+1) Background info
+
+Django includes default class based views to handle operations associated with authentication
+
+     - <a href = "https://docs.djangoproject.com/en/3.0/topics/auth/default/#all-authentication-views"> Django Authentication Views Ref </a>
+
+     - Views associated with `django.contrib.auth.views`
+          - LoginView
+          - LogoutView
+          - PasswordChangeView
+          - PasswordChangeDoneView
+          - PasswordResetView
+          - PasswordResetDoneView
+          - PasswordResetConfirmView
+          - PasswordResetCompleteView
+
+2) Update the app's `urls.py`
+
+     ~~~ py
+     from django.urls import path 
+     from . import views
+
+     urlpatterns = [
+          # path('login/', views.user_login, name = 'login'),
+          path('login/', auth_views.LoginView.as_view(), name = 'login'),
+          path('logout', auth_views.LogoutView.as_view(), name = 'logout'),
+
+     ]
+     ~~~

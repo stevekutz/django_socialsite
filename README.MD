@@ -101,7 +101,7 @@
      from django import forms
 
      class LoginForm(forms.Form):
-          userName = forms.CharField()
+          username = forms.CharField()
           password = forms.CharField(widget = forms.PasswordInput)
      ~~~
 
@@ -173,7 +173,7 @@
 
           ~~~ py
           from django.contrib import admin
-          from django.urls import path
+          from django.urls import path, include
 
           urlpatterns = [
           path('admin/', admin.site.urls),
@@ -196,7 +196,7 @@
 
                <head>
                     <title>{% block title %} {% endblock %} </title>
-                    <link href = "{% static "css.base.css" %}" rel = "stylesheet" />
+                    <link href = "{% static "css/base.css" %}" rel = "stylesheet" />
                </head>
 
                <body>
@@ -215,7 +215,7 @@
      - add the following to `login.html`
 
           ~~~ html
-          (% extends "base.html" %)
+          {% extends "base.html" %}
 
           {% block title %} Log in {% endblock %}
 
@@ -225,7 +225,7 @@
 
                <p> Use the following form </p>
 
-               <form> method = "post">
+               <form method = "post">
                     {% csrf_token %}
                     {{ form.as_p }}
                     <p>
@@ -516,3 +516,22 @@
      color:#ccc;
      }
      ~~~
+
+7) Create a superuser
+
+     ~~~ py
+     python manage.py createsuperuser
+     ~~~
+
+8) Launch server, goto admin panel and create a new user
+
+     ~~~ py
+     python manage.py runserver
+     ~~~
+
+9) Attempt to login in newly created user credentials at the site `http://127.0.0.1:8000/account/login/`
+
+
+     - the following should be displayed
+
+          <img src = "login_form.png" width = "20%"/>

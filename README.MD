@@ -721,7 +721,7 @@ Django includes default class based views to handle operations associated with a
 
 #### Django Authentication Views for Changing Passwords
 
-1) Create a `password_change_form.html` template inside the app's `account` folder
+1) Create a `password_change_form.html` template inside the app's `registration` folder
 
 
      ~~~ html
@@ -743,7 +743,7 @@ Django includes default class based views to handle operations associated with a
      {% endblock %}
      ~~~
 
-2) Create a `password_change_done.html` template inside the app's `account` folder
+2) Create a `password_change_done.html` template inside the app's `registration` folder
 
      - this is just to provide a simple confirmation message that the password change was successful
 
@@ -772,4 +772,115 @@ Django includes default class based views to handle operations associated with a
      ]
      ~~~
 
-4) Test the templates by opening `http://127.0.0.1:8000/account/password_change/` in the browser and changing the passwords  
+4) Test the templates by opening `http://127.0.0.1:8000/account/password_change/` in the browser and changing the passwords 
+
+#### Django Authentication Views for Password Reset 
+
+1) Create a `password_reset_form.html` template inside the app's `registration` folder
+
+     ~~~ html
+     {% extends "base.html" %}
+
+     {% block title %} Reset yoru password {% endblock %}
+
+     {% block content %}
+          <h1> Forgot your password ? </h1>
+          <p> Enter your e-mail address to receive your new password </p>
+          <form method = "post">
+               {{ form.as_p }}
+               <p>  
+                    <input type = "submit" value = "Send e-mail"/>
+               </p>
+               {% csrf_token %}
+          </form>
+
+     {% endblock %}
+     ~~~
+
+2) Create a `password_reset_email.html` template inside the app's `registration` folder  
+
+     ~~~ html
+     {% extends "base.html" %}
+
+     {% block title %} Reset yoru password {% endblock %}
+
+     {% block content %}
+          <h1> Forgot your password ? </h1>
+          <p> Enter your e-mail address to receive your new password </p>
+          <form method = "post">
+               {{ form.as_p }}
+               <p>  
+                    <input type = "submit" value = "Send e-mail"/>
+               </p>
+               {% csrf_token %}
+          </form>
+
+     {% endblock %}
+     ~~~
+
+3) Create a `password_reset_done.html` template inside the app's `registration` folder 
+   
+     ~~~ html
+     {% extends "base.html" %}
+     {% block title %} Reset your password  {% endblock %}
+
+     {% block content %}
+
+          <h1> Reset your password </h1>
+          <p> You have been sent an email with instructions for resetting your password </p>
+          <p> If you did not receive an email, verify the email used during registration </p>
+          
+     {% endblock %}
+     ~~~
+
+4) Create a `password_reset_confirm.html` template inside the app's `registration` folder
+
+     ~~~ html
+     {% extends "base.html" %}
+
+     {% block title %} Reset your password {% endblock %}
+
+     {% block content %}
+          <h1> Reset your password </h1>
+          {% if validlink %}
+               <p> Please enter your new password twice: </p>
+               <form method = "post">
+                    {{ form.as_p }}
+                    {% csrf_token %}
+                    <p>
+                         <input type = "submit" value = "Change my password" />
+                    </p>
+               </form> 
+          {% else %}         
+               <p> The password reset link was invalid, possibly because it has already been used. </p>
+               <p> Please request a new password reset </p>
+
+          {% endif %}
+     {% endblock %}
+     ~~~
+
+5) Create a `password_reset_complete.html` template inside the app's `registration` folder
+
+     ~~~ html
+     {% extends "base.html" %}
+
+     {% block title %} Reset your password {% endblock %}
+
+     {% block content %}
+          <h1> Reset your password </h1>
+          {% if validlink %}
+               <p> Please enter your new password twice: </p>
+               <form method = "post">
+                    {{ form.as_p }}
+                    {% csrf_token %}
+                    <p>
+                         <input type = "submit" value = "Change my password" />
+                    </p>
+               </form> 
+          {% else %}         
+               <p> The password reset link was invalid, possibly because it has already been used. </p>
+               <p> Please request a new password reset </p>
+
+          {% endif %}
+     {% endblock %}
+     ~~~

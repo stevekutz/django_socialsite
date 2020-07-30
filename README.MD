@@ -635,6 +635,9 @@ Django includes default class based views to handle operations associated with a
 
 6) Create a `dashboard` template inside the `account` folder
 
+     - the authentication middleware sets the user information in the HttpRequest obj
+     - this information is available via the User obj using `request.user`
+
      ~~~ html
      {% extends "base.html" %}
 
@@ -642,6 +645,63 @@ Django includes default class based views to handle operations associated with a
 
      {% block content %}
           <h1> Dashboard </h1>
-          <p> Welcome to your dashboard </p>
+          <p> Welcome to your dashboard {{ request.user.first_name }} ! </p>
      {% endblock %}  
+     ~~~
+
+7) Update the app's `urls.py`
+
+     ~~~ py
+     urlpatterns = [
+          # path('login/', views.user_login, name = 'login'),
+          path('login/', auth_views.LoginView.as_view(), name = 'login'),
+          path('logout/', auth_views.LogoutView.as_view(), name = 'logout'),
+          path('', views.dashboard, name = 'dashboard')
+     ~~~
+
+8) Update the project's `settings.py` file
+
+     - default URLs are defined
+     - the `name` attribute corresponds to the URL patterns instead of hardcoding URLs
+
+     ~~~ py
+     LOGIN_REDIRECT_URL = 'dashboard'
+     LOGIN_URL = 'login'
+     LOGOUT_URL = 'logout'
+     ~~~
+
+9) Update `base.html` to provide customized information for the currently logged in user
+
+     - the authentication middleware sets the user information in the HttpRequest obj
+     - this information is available via the User obj using `request.user`
+     - `is_authenticated` is used to verify if a user is authenticated
+     - if not authenticated, the `Useer` obj sets the user to `AnonymousUser`
+
+     ~~~ html
+     <div id = "header">
+                    <span class = "logo"> Bookmarks </span>
+                    {% if request.user.is_authenticated %}     
+                         <ul class = "menu">
+                              <li {% if section == "dashboard" %} class = "selected" {% endif %}>
+                                   <a href = "{% url "dashboard" %}"> My dashboard </a>
+                              </li>
+                              <li {% if section == "images" %} class = "selected" {% endif %}>
+                                   <a href = "#"> Images </a>
+                              </li>
+                              <li {% if section == "people "%} class = "selected" {% endif %} >
+                                   <a href = "#"> People </a>
+                              </li>     
+                         </ul>
+                    {% endif %}
+
+                    <span class = "user">
+                         {% if request.user.is_authenticated %}     
+                              Hello {{request.user.first_name}},
+                              <a href = "{% url "logout" %}"> Logout </a>
+                         {% else %}     
+                              <a href = "{% url "login" %}"> Login </a>
+                         {% endif %}     
+                    </span>
+
+               </div>
      ~~~

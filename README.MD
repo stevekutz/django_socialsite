@@ -555,7 +555,20 @@ Django includes default class based views to handle operations associated with a
           - PasswordResetConfirmView
           - PasswordResetCompleteView
 
-2) Update the app's `urls.py`
+     - URL patterns used by `Django`
+          - accounts/login/ [name='login']
+          - accounts/logout/ [name='logout']
+          - accounts/password_change/ [name='password_change']
+          - accounts/password_change/done/ [name='password_change_done']
+          - accounts/password_reset/ [name='password_reset']
+          - accounts/password_reset/done/ [name='password_reset_done']
+          - accounts/reset/<uidb64>/<token>/ [name='password_reset_confirm']
+          - accounts/reset/done/ [name='password_reset_complete']
+
+1) Update the app's `urls.py`
+
+     - note the usage of specific `URLconf pattern` names
+     - 
 
      ~~~ py
      from django.urls import path 
@@ -564,16 +577,16 @@ Django includes default class based views to handle operations associated with a
      urlpatterns = [
           # path('login/', views.user_login, name = 'login'),
           path('login/', auth_views.LoginView.as_view(), name = 'login'),
-          path('logout/', auth_views.LogoutView.as_view(), name = 'logout'),
+          path('logout/', auth_views.LogoutView.as_view(), name = 'logout'),  # required for using Django Authentication Views and default names
 
      ]
      ~~~
 
-3) Create the following directory structure inside the templates folder
+2) Create the following directory structure inside the templates folder
 
      <img src = "registration_structure.png"/>
 
-4) Create the `login.html` template inside the `registration` folder
+3) Create the `login.html` template inside the `registration` folder
 
      - `next` is initialized in the logiin view
      - the `next` parameter passed is a `URL` directed to by Django after successful login
@@ -609,7 +622,7 @@ Django includes default class based views to handle operations associated with a
           {% endblock %} 
           ~~~
 
-5) Create the `logged_out.html` template 
+4) Create the `logged_out.html` template 
 
 
      ~~~ py
@@ -625,7 +638,7 @@ Django includes default class based views to handle operations associated with a
 
      {% endblock %}
      ~~~
-6)  Update the `views.py` to direct logged in users to their `dashbaord`
+5)  Update the `views.py` to direct logged in users to their `dashbaord`
 
      - a decorator is used to verify is user is authenticated
      - if authenticated, the `dashboard` view is run
@@ -705,3 +718,58 @@ Django includes default class based views to handle operations associated with a
 
                </div>
      ~~~
+
+#### Django Authentication Views for Changing Passwords
+
+1) Create a `password_change_form.html` template inside the app's `account` folder
+
+
+     ~~~ html
+     {% extends "base.html" %}
+
+     {% block title %} Change password {% endblock %}
+
+     {% block content %}
+          <h1> Change your password </h1>
+          <p> Use the form below to change your password </p>
+          <form method = "post">
+               {{ form.as_p }}
+               <p>
+                    <input type = "submit" value = "Change">
+                    {% csrf_token %}
+               </p>
+          </form>
+
+     {% endblock %}
+     ~~~
+
+2) Create a `password_change_done.html` template inside the app's `account` folder
+
+     - this is just to provide a simple confirmation message that the password change was successful
+
+     ~~~ html
+     {%  extends "base.html" %}
+
+     {% block title %} Password changed {% endblock %}
+
+     {% block content %}
+          <h1> Password changed </h1>
+          <p> Your password was successfully changed </p>
+
+     {% endblock %}
+     ~~~
+
+3) Update the app's `urls.py` to add the template names to the paths     
+
+     ~~~ py
+     urlpatterns = [
+          # path('login/', views.user_login, name = 'login'),
+          path('login/', auth_views.LoginView.as_view(), name = 'login'),
+          path('logout/', auth_views.LogoutView.as_view(), name = 'logout'),
+          path('', views.dashboard, name = 'dashboard'),
+          path('password_change/', auth_views.PasswordChangeView.as_view(), name = 'password_change'),
+          path('password_change_done/', auth_views.PasswordChangeDoneView.as_view(), name = 'password_change_done'),
+     ]
+     ~~~
+
+4) Test the templates by opening `http://127.0.0.1:8000/account/password_change/` in the browser and changing the passwords  

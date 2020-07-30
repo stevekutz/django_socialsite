@@ -568,3 +568,43 @@ Django includes default class based views to handle operations associated with a
 
      ]
      ~~~
+
+3) Create the following directory structure inside the templates folder
+
+     <img src = "registration_structure.png"/>
+
+4) Create the `login.html` template inside the `registration` folder
+
+     - `next` is initialized in the logiin view
+     - the `next` parameter passed is a `URL` directed to by Django after successful login
+     - `next` is initialized in the logiin view
+     - this form used is from `django.contrib.auth.forms`
+
+          ~~~ html
+          {% extends base.html %}
+
+          {% block title %} Log-in {% endblock%}
+
+          {% block content %}
+
+               <h1> Log in </h1>
+
+               {% if form.errors %}
+                    <p> Username and/or password did not match </p>
+               {% else %}
+                    <p> Use the following form to log in </p>
+               {% endif %}
+
+               <div class = "login-form">
+                    <form action = "{% url 'login' %}" method = "post">
+                         {{ form.as_p }}
+                         {% csrf_token %}
+                         <input type = "hidden" name = "next" value = {{ next }} />
+                         <p> 
+                              <input type = "submit" value = "Log-in"/>
+                         </p>
+                    </form>
+               </div>
+               
+          {% endblock %} 
+          ~~~

@@ -564,7 +564,7 @@ Django includes default class based views to handle operations associated with a
      urlpatterns = [
           # path('login/', views.user_login, name = 'login'),
           path('login/', auth_views.LoginView.as_view(), name = 'login'),
-          path('logout', auth_views.LogoutView.as_view(), name = 'logout'),
+          path('logout/', auth_views.LogoutView.as_view(), name = 'logout'),
 
      ]
      ~~~
@@ -581,7 +581,7 @@ Django includes default class based views to handle operations associated with a
      - this form used is from `django.contrib.auth.forms`
 
           ~~~ html
-          {% extends base.html %}
+          {% extends "base.html" %}
 
           {% block title %} Log-in {% endblock%}
 
@@ -599,7 +599,7 @@ Django includes default class based views to handle operations associated with a
                     <form action = "{% url 'login' %}" method = "post">
                          {{ form.as_p }}
                          {% csrf_token %}
-                         <input type = "hidden" name = "next" value = {{ next }} />
+                         <input type = "hidden" name = "next" value ="{{ next }}"/>
                          <p> 
                               <input type = "submit" value = "Log-in"/>
                          </p>
@@ -608,3 +608,40 @@ Django includes default class based views to handle operations associated with a
                
           {% endblock %} 
           ~~~
+
+5) Create the `logged_out.html` template 
+
+
+     ~~~ py
+     {% extends "base.html" %}
+
+     {% block title %} Logged Out {% endblock %}
+
+     {% block content %}
+          <h2> Logged out </h2>
+
+          <p> You are now loggged out </p>
+          <p> You can <a href = "{% url "login" %}"> log in again </a> </p>
+
+     {% endblock %}
+     ~~~
+6)  Update the `views.py` to direct logged in users to their `dashbaord`
+
+     - a decorator is used to verify is user is authenticated
+     - if authenticated, the `dashboard` view is run
+     - if not authenticated, the 'GET' parameter called 'next' is used to redirect back to the login page qith  error messages
+     - the login view redirects the user to the dashbaord utilizing the `hidden input` in the `login` template
+     the `section` variable to track the part of the site(e.g. section) the user is on. Note that mutliple views may correspond to the same section
+
+6) Create a `dashboard` template inside the `account` folder
+
+     ~~~ html
+     {% extends "base.html" %}
+
+     {% block title %} Dashboard {% endblock %}
+
+     {% block content %}
+          <h1> Dashboard </h1>
+          <p> Welcome to your dashboard </p>
+     {% endblock %}  
+     ~~~

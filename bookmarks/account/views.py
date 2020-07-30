@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm
 
+from django.contrib.auth.decorators import login_required
+
 def user_login(request):
      # user has submitted a completed form
      if request.method == 'POST':
@@ -33,3 +35,8 @@ def user_login(request):
           'form': form
           }
      return render(request, 'account/login.html', context)
+
+
+@login_required
+def dashboard(request):
+     return render(request, 'account/dashboard.html', {'section': dashboard})     

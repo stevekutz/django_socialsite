@@ -902,3 +902,27 @@ Django includes default class based views to handle operations associated with a
           path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name = 'password_reset_complete'),
      ]
      ~~~
+
+7) Create a link to the `password_reset` template in the `login.html` template
+
+     ~~~ html
+          <div class="login-form">
+               <form action="{% url 'login' %}" method="post">
+                    {{ form.as_p }}
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}" />
+                    <p><input type="submit" value="Log-in"></p>
+               </form>
+               <p>
+                    <a href = "{% url "password_reset" %}"> Forgotten your password ? </a>
+               </p>     
+          </div>
+     ~~~
+
+8) Set up `Djanngo` to send emails to standard output instead of using an SMTP server
+
+     - add the following to the bottom of `settings.py`
+
+     ~~~ py
+     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+     ~~~

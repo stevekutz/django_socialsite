@@ -723,6 +723,9 @@ Django includes default class based views to handle operations associated with a
 
 1) Create a `password_change_form.html` template inside the app's `registration` folder
 
+     - In step 8), `Django` will be configured to send emails to standard output instead of an SMTP server
+     - IMPORTANT
+          - one of the user's MUST have the email used to send the reset or nothing will show up in the console
 
      ~~~ html
      {% extends "base.html" %}
@@ -781,7 +784,7 @@ Django includes default class based views to handle operations associated with a
      ~~~ html
      {% extends "base.html" %}
 
-     {% block title %} Reset yoru password {% endblock %}
+     {% block title %} Reset your password {% endblock %}
 
      {% block content %}
           <h1> Forgot your password ? </h1>
@@ -800,22 +803,10 @@ Django includes default class based views to handle operations associated with a
 2) Create a `password_reset_email.html` template inside the app's `registration` folder  
 
      ~~~ html
-     {% extends "base.html" %}
+     A password request was made for the email {{email}}. Follow the link below:
+     {{ protocol }}://{{ domain }}{% url "password_reset_confirm" uidb64=uid token=token  %}
 
-     {% block title %} Reset yoru password {% endblock %}
-
-     {% block content %}
-          <h1> Forgot your password ? </h1>
-          <p> Enter your e-mail address to receive your new password </p>
-          <form method = "post">
-               {{ form.as_p }}
-               <p>  
-                    <input type = "submit" value = "Send e-mail"/>
-               </p>
-               {% csrf_token %}
-          </form>
-
-     {% endblock %}
+     The username provided was {{ user.get_username }}
      ~~~
 
 3) Create a `password_reset_done.html` template inside the app's `registration` folder 
@@ -919,10 +910,51 @@ Django includes default class based views to handle operations associated with a
           </div>
      ~~~
 
-8) Set up `Djanngo` to send emails to standard output instead of using an SMTP server
+8) Set up `Django` to send emails to standard output instead of using an SMTP server
 
      - add the following to the bottom of `settings.py`
 
      ~~~ py
      EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
      ~~~
+
+9) Goto the URL `http://127.0.0.1:8000/account/login/` and select `Forgetten your password ?`
+
+     - enter a valid e-mail address associated with an account in the prompt
+
+          <img src = "password_reset.png" width = "20%"/>
+
+     - the following will be displayed in the console where the server is running
+
+          ~~~ bash 
+          http://127.0.0.1:8000/account/reset/Mw/5in-60ca52e1483b4440065f/
+
+          The username provided was user_1
+          -------------------------------------------------------------------------------
+          Content-Type: text/plain; charset="utf-8"
+          MIME-Version: 1.0
+          Content-Transfer-Encoding: 7bit
+          Subject: Password reset on 127.0.0.1:8000
+          From: webmaster@localhost
+          To: sktestdjango@gmail.com
+          Date: Fri, 31 Jul 2020 18:08:03 -0000
+          Message-ID: 
+          <159621888371.3190.15519389737900912866@1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa>
+
+          A password request was made for the email sktestdjango@gmail.com. Follow the link below:
+          http://127.0.0.1:8000/account/reset/NA/5in-26d4f15df2b9a7485101/
+          ~~~
+
+10) Enter the provided link in your browser to reset the user password  
+
+     - the following will be displayed
+
+          <img src = "password_reset_enter.png" width = "20%"/>
+
+11) Enter a new password
+     
+     - the following confirmation will be displayed
+
+          <img src = "reset_confirm.png" width = "20%"/>
+
+     - the new password will be required for login     

@@ -3,9 +3,36 @@ from django.shortcuts import render
 # Create your views here.
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm
 
 from django.contrib.auth.decorators import login_required
+
+def register(request):
+     # if 'POST', user has submitted a completed form
+     if request.method == 'POST':
+          user_form = UserRegistrationForm(request.POST)
+          if user_form.is_valid():
+               # create new_user obj but DO NOT save yet
+               new_user = user_form(commit=False)
+               # Set chosen password
+               new_user.set_password(user_form.cleaned_data['password'])
+               # Save User obj
+               new_user.save()
+
+               context = {
+                    'new_user: new_user',
+               }
+
+               return render(request, 'account/register_done.html', context)
+
+          # request.method must be 'GET' , present user blank form
+          else:
+               user_form = UserRegistrationForm()
+
+          context = {
+               'user_form': user_form,
+          }     
+          return render(request, 'account/register.html', context)               
+
 
 def user_login(request):
      # user has submitted a completed form

@@ -989,3 +989,42 @@ Django includes default class based views to handle operations associated with a
                     raise forms.ValidationError('Passwords don\'t match ')
                return cd['password2']
      ~~~
+
+2) Update the `views.py` to inlcude the `register` view
+
+     - the `set_password()` method of the user model handles hashing of the password
+
+     - import `UserRegsitrationForm`
+
+     ~~~ py
+     from django.contrib.auth import authenticate, login
+     ~~~
+
+     ~~~ py
+     def register(request):
+          # if 'POST', user has submitted a completed form
+          if request.method == 'POST':
+               user_form = UserRegistrationForm(request.POST)
+               if user_form.is_valid():
+                    # create new_user obj but DO NOT save yet
+                    new_user = user_form(commit=False)
+                    # Set chosen password
+                    new_user.set_password(user_form.cleaned_data['password'])
+                    # Save User obj
+                    new_user.save()
+
+                    context = {
+                         'new_user: new_user',
+                    }
+
+                    return render(request, 'account/register_done.html', context)
+
+               # request.method must be 'GET' , present user blank form
+               else:
+                    user_form = UserRegistrationForm()
+
+               context = {
+                    'user_form': user_form,
+               }     
+               return render(request, 'account/register.html', context)  
+     ~~~

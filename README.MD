@@ -994,10 +994,10 @@ Django includes default class based views to handle operations associated with a
 
      - the `set_password()` method of the user model handles hashing of the password
 
-     - import `UserRegsitrationForm`
+     - import `UserRegistrationForm`
 
      ~~~ py
-     from django.contrib.auth import authenticate, login
+     from .forms import LoginForm, UserRegistrationForm
      ~~~
 
      ~~~ py
@@ -1007,7 +1007,7 @@ Django includes default class based views to handle operations associated with a
                user_form = UserRegistrationForm(request.POST)
                if user_form.is_valid():
                     # create new_user obj but DO NOT save yet
-                    new_user = user_form(commit=False)
+                    new_user = user_form.save(commit=False)
                     # Set chosen password
                     new_user.set_password(user_form.cleaned_data['password'])
                     # Save User obj
@@ -1028,3 +1028,75 @@ Django includes default class based views to handle operations associated with a
                }     
                return render(request, 'account/register.html', context)  
      ~~~
+
+3) Update the app's `urls.py` to include the registration path
+
+     ~~~ py
+     urlpatterns = [
+          # path('login/', views.user_login, name = 'login'),
+          path('login/', auth_views.LoginView.as_view(), name = 'login'),
+          path('logout/', auth_views.LogoutView.as_view(), name = 'logout'),
+          path('', views.dashboard, name = 'dashboard'),
+          path('password_change/', auth_views.PasswordChangeView.as_view(), name = 'password_change'),
+          path('password_change_done/', auth_views.PasswordChangeDoneView.as_view(), name = 'password_change_done'),
+          # pasword reset urls
+          path('password_reset/', auth_views.PasswordResetView.as_view(), name = 'password_reset'),
+          path('password_reset/done', auth_views.PasswordResetDoneView.as_view(), name = 'password_reset_done'),
+          path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name = 'password_reset_confirm'),
+          path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name = 'password_reset_complete'),
+          # registration
+          path('register/', views.register, name = 'register'),
+     ]
+     ~~~
+
+4) Add `register.html` template to the `account` folder
+
+     ~~~ html
+     {%  extends "base.html" %}
+
+     {% block title %} Create an account {% endblock %}
+
+     {% block content %}
+
+          <h1> Create an account </h2>
+          <p> Use the following form to sign up </p>
+
+          <form  method = "post">
+               {{ user_form.as_p }}
+               {% csrf_token %}
+
+               <p>
+                    <input type = "submit" value = "Create my account"/>
+               </p>
+
+          </form>
+     {% endblock %} 
+     ~~~
+
+5) Add `register_done.html` template to the `account` folder
+
+     ~~~ html
+     {% extends "base.html" %}
+
+     {% block title %}  {% endblock %}
+
+     {% block content %}
+          <h1> Welcome {{new_user.first_name}} {{new_user.last_name}} </h1>
+          <p> You have successfully created your account. You can log in
+               <a href = "{% url "login" %}" >  log in </a>
+          </p>
+
+     {% endblock %}
+     ~~~
+
+6) Open your browser to `http://127.0.0.1:8000/account/register/`
+
+     - the registration form should display
+
+          <img src = "registration_form.png"/>
+
+     - after registering a new user, verification message should display with the user's first and last name
+     - NOTE: if you want to be able to change the user's password, you must include a valid email during registration
+     - verify that duplicate user's can be created, all fields are complete, etc.
+
+

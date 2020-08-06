@@ -1100,3 +1100,32 @@ Django includes default class based views to handle operations associated with a
      - verify that duplicate user's can be created, all fields are complete, etc.
 
 
+### Enhancing the User Model
+
+1) The `Pillow` library is used to manage image files and must be installed
+
+     ~~~ py
+     pip install Pillow
+     ~~~
+
+2) Create a profile model with additional fields and a one-to-one relationship with the default `Django` user model in the app's `models.py` file
+
+     - Profiles can be associated with users via a `one-to-one` relationship
+     - it is important to set the `on_delete = models.CASCADE` so that all everything associated with a user's profile is deleted when the user is deleted
+
+     ~~~ py
+     from django.db import models
+     from django.conf import settings
+
+     # Create your models here.
+
+     class Profile(models.Model):
+          user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
+          date_of_birth = models.DateField(blank = True, null = True)
+          photo = models.ImageField(upload_to = 'users/%Y/%m/%d', blank = True)
+
+          def __str__(self):
+               return f'Profile for user {self.user.username}'
+     ~~~
+
+     

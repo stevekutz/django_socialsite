@@ -1137,3 +1137,46 @@ Django includes default class based views to handle operations associated with a
      MEDIA_URL = '/media/'
      MEDIA_ROOT = os.path.join(BASE_DIR, '/media')
      ~~~
+
+
+4) Update the project's `urls.py` file
+
+     ~~~ py
+     from django.contrib import admin
+     from django.urls import path, include
+     from django.conf import settings
+     from django.conf.urls.static import static
+
+     urlpatterns = [
+     path('admin/', admin.site.urls),
+     path('account/', include('account.urls'))   # required for using Django Authentication Views and default names
+     ]
+
+     if settings.DEBUG:
+          urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+     ~~~
+
+5) Run a migration
+
+     ~~~ py
+     python manage.py makemigrations
+     ~~~
+
+     - should display the folowing in your terminal
+          ~~~ bash 
+          account/migrations/0001_initial.py
+          - Create model Profile
+          ~~~
+
+     ~~~ py
+     python manage.py migrate
+     ~~~
+
+     - should display the following
+
+          ~~~ bash 
+          Operations to perform:
+          Apply all migrations: account, admin, auth, contenttypes, sessions
+          Running migrations:
+          Applying account.0001_initial... OK
+          ~~~

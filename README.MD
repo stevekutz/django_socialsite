@@ -1128,4 +1128,12 @@ Django includes default class based views to handle operations associated with a
                return f'Profile for user {self.user.username}'
      ~~~
 
-     
+3) Update `settings.py`
+
+     - `MEDIA_URL` permits `Django` to manage user uploaded media files
+     - `MEDIA_ROOT` is location of uploaded files
+
+     ~~ py
+     MEDIA_URL = '/media/'
+     MEDIA_ROOT = os.path.join(BASE_DIR, '/media')
+     ~~~

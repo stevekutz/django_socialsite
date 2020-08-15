@@ -1180,8 +1180,19 @@ Django includes default class based views to handle operations associated with a
           Running migrations:
           Applying account.0001_initial... OK
           ~~~
+6) Update the apps' `admin.py` file
 
-6) Add the following forms to the app's `forms.py` file          
+     - the <a href = "https://docs.djangoproject.com/en/3.1/ref/contrib/admin/" >`@admin.register` decorator</a> registers the `Profile` class
+
+     ~~~ py
+     from .models import Profile
+
+     @admin.register(Profile)
+     class ProfileAdmin(admin.ModelAdmin):
+     list_display = ['user', 'date_of_birth', 'photo']
+     ~~~
+
+1) Add the following forms to the app's `forms.py` file          
 
      ~~~ py
      from .models import Profile
